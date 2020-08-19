@@ -47,9 +47,15 @@ func run() error {
 
 	// draw background
 	//img.Init()
-	if err := drawBackground(r); err != nil {
+	s, err := newScene(r)
+	//if err := drawBackground(r); err != nil {
+	//	fmt.Errorf("Could not draw background: %v",err)
+	//}
+	if err != nil {
 		fmt.Errorf("Could not draw background: %v",err)
 	}
+	defer s.destroy()
+	s.paint(r)
 
 	time.Sleep(5 * time.Second)
 
