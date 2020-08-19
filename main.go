@@ -36,35 +36,49 @@ func run() error {
 
 	_ = r
 
+	//return drawTitle(r)
+	if err := drawTitle(r); err != nil {
+		return fmt.Errorf("Could not draw title: %v",err)
+	}
+
 	//delay to destroy
 	time.Sleep(5 *  time.Second)
 
-	return drawTitle(r)
 
-	//return nil
+	return nil
 }
 
 func drawTitle(r *sdl.Renderer) error {
-	f, err := ttf.OpenFont("res/fonts/patch.ttf",20)
+	r.Clear() // to clear the buffer and present it
+	// clear buffer,paint on it, and put it on the other side
+
+	f, err := ttf.OpenFont("res/fonts/animal.ttf",170)
 	if err != nil {
 		return fmt.Errorf("Could not load font: %v",err)
 	}
+	// close the font used
+	defer f.Close()
 
 	c := sdl.Color{R: 255, G: 100, B: 0, A: 255}
 	s, err := f.RenderUTF8Solid("Fluffy Gopherz", c)
 	if err != nil {
 		return fmt.Errorf("Could not render title: %v",err)
 	}
+	// free the surface
+	defer s.Free()
 
 	// create texture from surface
 	t, err := r.CreateTextureFromSurface(s)
 	if err != nil {
 		return fmt.Errorf("Could not create texture: %v",err)
 	}
+	defer t.Destroy()
 
 	if err := r.Copy(t,nil,nil); err != nil {
 		return fmt.Errorf("Could not copy texture: %v",err)
 	}
+
+	r.Present()
 
 	return nil
 }
