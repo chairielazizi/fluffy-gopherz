@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
+	"math/rand"
 	"sync"
 	"time"
 )
@@ -121,11 +122,11 @@ func newPipe() *pipe {
 
 	return &pipe {
 		//texture: texture,
-		x: 400,
-		h: 300,
+		x: 800,
+		h: 100 + int32(rand.Intn(300)),
 		w: 50,
 		//speed: 1,
-		inverted: true,
+		inverted: rand.Float32() > 0.5, // rand.Float32() returns number 0 - 1
 	}
 }
 
