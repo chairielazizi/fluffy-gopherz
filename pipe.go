@@ -89,12 +89,20 @@ func (ps *pipes) restart() {
 func (ps *pipes) update() {
 	ps.mu.RLock()
 	defer ps.mu.RUnlock()
+
+	var rem []*pipe
+
 	for _, p := range ps.pipes{
 		//p.update()
 		p.mu.Lock()
 		p.x -= ps.speed
 		p.mu.Unlock()
+		// delete remaining past pipes
+		if p.x + p.w > 0 {
+			rem = append(rem, p)
+		}
 	}
+	ps.pipes = rem
 }
 
 func (ps *pipes) destroy() {
