@@ -1,11 +1,11 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	"github.com/veandco/go-sdl2/sdl"
 	"github.com/veandco/go-sdl2/ttf"
 	"os"
+	"runtime"
 	"time"
 )
 
@@ -56,7 +56,7 @@ func run() error {
 	}
 	defer s.destroy()
 
-	ctx, cancel := context.WithCancel(context.Background())
+	//ctx, cancel := context.WithCancel(context.Background())
 	//defer cancel()
 
 	//go func() {
@@ -64,10 +64,24 @@ func run() error {
 	//	cancel()
 	//}()
 	// the same thing
-	time.AfterFunc(5 * time.Second, cancel)
+	//time.AfterFunc(5 * time.Second, cancel)
+
+	// goroutine continuously call the wait events, send it to the channel events, to the run func
+	events := make(chan sdl.Event)
+	errc := s.run(events,r)
+	runtime.LockOSThread()
+		for {
+			select {
+			case events <- sdl.WaitEvent():
+			case err := <- errc:
+				return err
+
+			}
+		}
+
 
 	// wait until run() return
-	return <-s.run(ctx,r)
+	//return <-
 
 	//s.run(ctx,r)
 	//if err := s.paint(r); err != nil {
