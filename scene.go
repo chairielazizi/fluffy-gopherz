@@ -14,6 +14,10 @@ type scene struct {
 	bg *sdl.Texture
 	bird *bird
 	//birds []*sdl.Texture // slice of texture // move to bird.go
+
+
+	// add pipe
+	pipe *pipe
 }
 
 func newScene(r *sdl.Renderer) (*scene,error) {
@@ -27,8 +31,13 @@ func newScene(r *sdl.Renderer) (*scene,error) {
 		return nil, err
 	}
 
+	p, err := newPipe(r)
+	if err != nil {
+		return nil, err
+	}
+
 	// return all where bg is texture, otherwise nil
-	return &scene{bg:bg, bird: b}, nil
+	return &scene{bg:bg, bird: b, pipe: p}, nil
 }
 
 // run in different goroutine
@@ -81,10 +90,12 @@ func (s *scene) handleEvent(event sdl.Event) bool{
 
 func (s *scene) update() {
 	s.bird.update()
+	s.pipe.update()
 }
 
 func (s *scene) restart(){
 	s.bird.restart()
+	s.pipe.restart()
 }
 
 // method
@@ -103,6 +114,11 @@ func (s *scene) paint(r *sdl.Renderer) error {
 		return err
 	}
 
+	// pipe
+	if err := s.pipe.paint(r); err != nil {
+		return err
+	}
+
 	r.Present()
 	return nil
 }
@@ -110,4 +126,5 @@ func (s *scene) paint(r *sdl.Renderer) error {
 func (s *scene) destroy() {
 	s.bg.Destroy()
 	s.bird.destroy()
+	s.pipe.destroy()
 }
