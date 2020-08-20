@@ -61,10 +61,16 @@ func (s *scene) handleEvent(event sdl.Event) bool{
 	switch event.(type) {
 	case *sdl.QuitEvent:
 		return true
+	case *sdl.MouseButtonEvent:
+		// click to jump
+		s.bird.jump()
+		return false
+	case *sdl.MouseMotionEvent, *sdl.WindowEvent:
+		// for not print on the log
 	default:
 		log.Printf("unknown event %T", event)
-		return false
 	}
+		return false
 }
 
 // method
