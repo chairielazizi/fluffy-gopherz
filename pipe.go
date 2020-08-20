@@ -30,7 +30,7 @@ func newPipe(r *sdl.Renderer) (*pipe, error) {
 		h: 300,
 		w: 50,
 		speed: 1,
-		inverted: false,
+		inverted: true,
 	}, nil
 }
 
@@ -39,10 +39,20 @@ func (p *pipe) paint(r *sdl.Renderer) error {
 	defer p.mu.RUnlock()
 
 	rect := &sdl.Rect{X: p.x,Y: 600 - p.h, W: p.w, H: p.h}
-
-	if err := r.Copy(p.texture,nil,rect); err != nil {
+	flip := sdl.FLIP_NONE
+	// inverted pipe
+	if p.inverted {
+		rect.Y = 0
+		flip = sdl.FLIP_VERTICAL
+	}
+	if err := r.CopyEx(p.texture, nil, rect, 0, nil,flip); err != nil {
 		return fmt.Errorf("could not copy background: %v",err)
 	}
+
+	// bottom pipe
+	//if err := r.Copy(p.texture,nil,rect); err != nil {
+	//	return fmt.Errorf("could not copy background: %v",err)
+	//}
 
 	return nil
 }
