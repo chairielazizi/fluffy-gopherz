@@ -6,9 +6,14 @@ import (
 	"github.com/veandco/go-sdl2/sdl"
 )
 
+const gravity = 0.25
+
 type bird struct {
 	time int
 	textures []*sdl.Texture
+
+	// acceleration
+	y, speed float64
 }
 
 func newBird(r *sdl.Renderer) (*bird, error) {
@@ -22,14 +27,22 @@ func newBird(r *sdl.Renderer) (*bird, error) {
 		}
 		textures = append(textures, texture)
 	}
-	return &bird{textures: textures}, nil
+	return &bird{textures: textures, y: 300}, nil
 }
 
 func (b *bird) paint(r *sdl.Renderer) error {
 	// bird
 	b.time++
+	// add gravity
+	b.y -= b.speed
+	if b.y < 0 {
+		// make it bounce when falling to the ground
+		b.speed = -b.speed
+		b.y = 0
+	}
+	b.speed += gravity
 
-	rect := &sdl.Rect{X: 10,Y: 300 - 43/2, W: 50, H: 43}
+	rect := &sdl.Rect{X: 10,Y: (600 - int32(b.y)) - 43/2, W: 50, H: 43}
 
 	i := b.time/10 % len(b.textures)
 	if err := r.Copy(b.textures[i],nil,rect); err != nil {
