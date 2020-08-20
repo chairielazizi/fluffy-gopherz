@@ -5,6 +5,7 @@ import (
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
 	"sync"
+	"time"
 )
 
 type pipes struct {
@@ -22,10 +23,22 @@ func newPipes (r *sdl.Renderer) (*pipes, error) {
 		fmt.Errorf("could not load pipe image: %v", err)
 	}
 
-	return &pipes{
+	ps := &pipes{
 		texture: texture,
 		speed:   2,
-	}, nil
+	}
+
+	// add pipes every second
+	go func() {
+		for  {
+			ps.mu.Lock()
+			ps.pipes = append(ps.pipes, newPipe())
+			ps.mu.Unlock()
+			time.Sleep(time.Second)
+		}
+	}()
+
+	return ps, nil
 }
 
 func (ps *pipes) paint(r *sdl.Renderer) error {
@@ -100,7 +113,7 @@ type pipe struct {
 }
 
 // single pipe
-func newPipe(r *sdl.Renderer) (*pipe, error) {
+func newPipe() *pipe {
 	//texture, err := img.LoadTexture(r,"res/imgs/bottomPipe.png")
 	//if err != nil {
 	//	fmt.Errorf("could not load pipe image: %v",err)
@@ -113,7 +126,7 @@ func newPipe(r *sdl.Renderer) (*pipe, error) {
 		w: 50,
 		//speed: 1,
 		inverted: true,
-	}, nil
+	}
 }
 
 func (p *pipe) touch(b *bird) {
