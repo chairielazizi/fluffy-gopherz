@@ -38,7 +38,7 @@ func run() error {
 	_ = r
 
 	//return drawTitle(r)
-	if err := drawTitle(r); err != nil {
+	if err := drawTitle(r,"Fluffy Gopherz"); err != nil {
 		return fmt.Errorf("Could not draw title: %v",err)
 	}
 
@@ -93,7 +93,7 @@ func run() error {
 	//return nil
 }
 
-func drawTitle(r *sdl.Renderer) error {
+func drawTitle(r *sdl.Renderer, text string) error {
 	r.Clear() // to clear the buffer and present it
 	// clear buffer,paint on it, and put it on the other side
 
@@ -105,7 +105,7 @@ func drawTitle(r *sdl.Renderer) error {
 	defer f.Close()
 
 	c := sdl.Color{R: 255, G: 100, B: 0, A: 255}
-	s, err := f.RenderUTF8Solid("Fluffy Gopherz", c)
+	s, err := f.RenderUTF8Solid(text, c)
 	if err != nil {
 		return fmt.Errorf("Could not render title: %v",err)
 	}
