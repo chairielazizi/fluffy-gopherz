@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/veandco/go-sdl2/img"
 	"github.com/veandco/go-sdl2/sdl"
+	"time"
 )
 
 type scene struct {
@@ -22,7 +23,7 @@ func newScene(r *sdl.Renderer) (*scene,error) {
 
 	// animate the bird
 	var birds []*sdl.Texture
-	for i:=0; i<=4; i++ {
+	for i:=1; i<=4; i++ {
 		path := fmt.Sprintf("res/imgs/frame-%d.png",i)
 		bird, err := img.LoadTexture(r,path)
 		if err != nil {
@@ -40,7 +41,7 @@ func (s *scene) run(ctx context.Context, r *sdl.Renderer) <-chan error {
 	errc := make(chan error)
 	go func() {
 		defer close(errc)
-		for {
+		for range time.Tick(10 * time.Millisecond) { // 100 frames per second
 			select {
 			case <-ctx.Done():
 				return
@@ -68,7 +69,7 @@ func (s *scene) paint(r *sdl.Renderer) error {
 
 	// bird
 	rect := &sdl.Rect{X: 10,Y: 300 - 43/2, W: 50, H: 43}
-	i := s.time % len(s.birds)
+	i := s.time/10 % len(s.birds)
 	if err := r.Copy(s.birds[i],nil,rect); err != nil {
 		return fmt.Errorf("could not copy  the bird background: %v",err)
 	}
