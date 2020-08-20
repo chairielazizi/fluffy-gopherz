@@ -16,7 +16,7 @@ type scene struct {
 }
 
 func newScene(r *sdl.Renderer) (*scene,error) {
-	bg, err := img.LoadTexture(r,"res/imgs/bg.jpg")
+	bg, err := img.LoadTexture(r,"res/imgs/bg2.jpg")
 	if err != nil {
 		fmt.Errorf("could not load background image: %v",err)
 	}

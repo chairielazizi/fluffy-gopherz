@@ -57,15 +57,17 @@ func run() error {
 	defer s.destroy()
 
 	ctx, cancel := context.WithCancel(context.Background())
-	defer cancel()
+	//defer cancel()
 
-	select {
-		case err := <-s.run(ctx,r):
-			//return fmt.Errorf("could not print scene: %v",err)
-			return err
-		case <-time.After(5 * time.Second):
-			return nil
-	}
+	//go func() {
+	//	time.Sleep(5 * time.Second)
+	//	cancel()
+	//}()
+	// the same thing
+	time.AfterFunc(5 * time.Second, cancel)
+
+	// wait until run() return
+	return <-s.run(ctx,r)
 
 	//s.run(ctx,r)
 	//if err := s.paint(r); err != nil {
